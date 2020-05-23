@@ -18,7 +18,7 @@ struct AffirmationsView: View {
     var body: some View {
         GeometryReader{ (proxy: GeometryProxy) in
             // Whole screen
-            VStack(alignment: .leading, spacing: 5) {
+            VStack(alignment: .leading, spacing: 8) {
                 // Title HStack
                 HStack(alignment: .center){
                     Text("Affirmations")
@@ -42,6 +42,7 @@ struct AffirmationsView: View {
 
                             ZStack{
                                 Button(action: {
+                                    //Check to see that our textfield is not empty
                                     if !self.newAffirmationItem.isEmpty{
                                         let affirmationItem = AffirmationItem(context: self.managedObjectContext)
 
@@ -77,62 +78,35 @@ struct AffirmationsView: View {
                 // List View
                 NavigationView{
                     List {
+                        // Give our section a header
                         Section(header: Text("Saved Affirmations")){
+                            // Load saved affirmations
                              ForEach(self.affirmationItems){ affirmationItem in
                                 ZStack {
                                     HStack (alignment: .top){
                                         VStack(alignment: .leading) {
 
-                                            HStack(alignment: .top) {
-                                               Spacer()
-                                               Button(action: {}){
-                                                   Image(systemName: "list.bullet")
-                                               }
-                                               .onTapGesture {
-                                                print("Test")
-                                               }
-                                               .contextMenu {
-                                                   ZStack {
-                                                       VStack{
-                                                           Button(action: {}){
-                                                               HStack{
-                                                                   Text("Edit")
-
-                                                                   Image(systemName: "text.cursor")
-                                                               }
-                                                           }
-
-                                                           Button(action: {}){
-                                                               HStack{
-                                                                   Text("Delete")
-                                                                   Image(systemName: "trash")
-                                                                               }
-                                                           }
-                                                       }
-                                                   }
-                                                }
-                                           .buttonStyle(PlainButtonStyle())
-                                           .padding(5)
-                                           }
-                                               Spacer()
-
+                                            Spacer()
+                                            
                                             Text(affirmationItem.affirmationText!)
                                                    .font(.title)
                                                    .foregroundColor(Color.white)
                                                    .multilineTextAlignment(.leading)
-                                                   .padding(.bottom, 80)
-                                            }
+                                                   .padding()
+                                                   .frame(width: proxy.size.width - 60)
+                                            .fixedSize(horizontal: true, vertical: true)
                                         }
                                     }
-                                    .frame(width: proxy.size.width, height: 140)
-                                    .fixedSize(horizontal: true, vertical: true)
-                                    .background(RoundedCorners(color: Color.systemIndigo, topLeft: 40, topRight: 40, bottomLeft: 40, bottomRight: 0))
-                                    .shadow(color: self.colorScheme == .dark ? Color.darkEnd: Color.black.opacity(0.5), radius: 10, x: -5, y: -5)
-                                    .shadow(color: self.colorScheme == .dark ? Color.darkEnd : Color.white.opacity(0.5), radius: 10, x: -5, y: -5)
+                                }
+                                .frame(width: proxy.size.width - 40, height: 140)
+                                .fixedSize(horizontal: true, vertical: true)
+                                .background(RoundedCorners(color: Color.systemIndigo, topLeft: 30, topRight: 25, bottomLeft: 35, bottomRight: 0))
+                                .shadow(color: self.colorScheme == .dark ? Color.darkEnd: Color.black.opacity(0.5), radius: 10, x: -5, y: -5)
+                                .shadow(color: self.colorScheme == .dark ? Color.darkEnd : Color.white.opacity(0.5), radius: 10, x: -5, y: -5)
                             }
                             .onDelete{ indexSet in
-                                let deleteItem = self.affirmationItems[indexSet.first!]
-                                self.managedObjectContext.delete(deleteItem)
+                                let itemToDelete = self.affirmationItems[indexSet.first!]
+                                self.managedObjectContext.delete(itemToDelete)
 
                                 // Save
                                 do {
